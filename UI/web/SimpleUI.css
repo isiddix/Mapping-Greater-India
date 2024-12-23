@@ -1,0 +1,198 @@
+/* Styling for invisible message areas */
+p {
+    display: none; /* Initially hide all message areas */
+}
+
+/* Add styling when messages are visible */
+p:empty {
+    display: none; /* Remain hidden if there's no content */
+}
+
+p:not(:empty) {
+    display: block; /* Become visible when content is present */
+    background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent white background */
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    max-width: 90%;
+    color: #0066cc; /* dark text color for readability */
+    font-size: 16px;
+}
+
+/* Spinner for loading feedback */
+.spinner {
+    display: none;
+    border: 8px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 8px solid #6488ea; /* Soft blue */
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Body styling */
+body {
+    font-family: 'Poppins', sans-serif; /* Modern sans-serif font */
+    background-color: #ddf2fd; /* Soft blue background */
+    color: #333; /* Neutral text color for readability */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Container for the grid-like look */
+body::before {
+    content: "";
+    position: fixed; /* Ensures it remains fixed while scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Cover the viewport initially */
+    background-image: linear-gradient(to right, #d8d4f0 1px, transparent 1px),
+                      linear-gradient(to bottom, #d8d4f0 1px, transparent 1px);
+    background-size: 20px 20px; /* Adjust size of grid cells */
+    z-index: -1; /* Ensure it remains in the background */
+}
+
+html, body {
+    min-height: 100%; /* Ensures the grid expands with content */
+    margin: 0;
+    padding: 0;
+}
+
+/* Header and paragraph styling */
+h1, p {
+    background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent white background */
+    color: #0066cc;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px 0;
+    max-width: 90%;
+}
+
+h1 {
+   font-family: 'Tahoma', serif;
+}
+
+h2 {
+   font-family: 'Tahoma', serif;
+   color: #0066cc;
+   text-align: center;
+   max-width: 90%;
+   padding: 8px;
+}
+
+/* animated img positioning */
+#cornerGif {
+    position: fixed;
+    bottom: 1px; /* Adjust distance from bottom */
+    right: 20px; /* Adjust distance from right */
+    width: 250px; /* Adjust size */
+    height: auto; /* Maintain aspect ratio */
+    z-index: 1000; /* Ensure it appears above other content */
+    cursor: pointer; /* Optional: Change cursor to pointer for interactivity */
+}
+
+/* Button styling */
+button {
+    margin: 12px; /* 10px * 1.2 */
+    padding: 14.4px 26.4px; /* 12px * 1.2 and 22px * 1.2 */
+    font-weight: bold;
+    font-size: 1.2em; /* Scales the font size proportionally */
+    border: none;
+    border-radius: 12px; /* 10px * 1.2 */
+    background-color: #87CEEB; /* Sky blue button color */
+    color: #fff; /* White text for contrast */
+    cursor: pointer;
+    box-shadow: 0 4.8px 7.2px rgba(0, 0, 0, 0.1); /* Shadows scaled by 1.2 */
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0066cc; /* Darker blue for hover state */
+    transform: scale(1.05); /* Subtle pop effect */
+}
+
+button:focus {
+    outline: 4.8px solid #6488ea; /* 4px * 1.2 */
+}
+
+/* Modal styling */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #ddf2fd; /* light blue modal background */
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+}
+
+.close:hover {
+    color: #444;
+}
+
+/* Dropdown styling inside the modal */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin: 15px 0;
+    font-size: 14px;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 600px) {
+    h1, p {
+        font-size: 18px;
+        padding: 8px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+}

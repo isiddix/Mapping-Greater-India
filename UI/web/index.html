@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapping Tool</title>
+    <link rel="stylesheet" href="SimpleUI.css">
+</head>
+<body>
+
+    <h1>Mapping Tool</h1>
+    <p id="displayText"></p>
+    <input type="file" id="fileInput0" webkitdirectory style="display:none">
+    <button id="button0">Upload Files</button>
+    <p id="displayText0"></p>
+    <div id="spinner0" class="spinner"></div>
+
+    <button id="button1">OCR Scanned PDFs</button>
+    <p id="displayText1"></p>
+    <div id="spinner1" class="spinner"></div>
+
+    <button id="button2">Use NLP to Scan for Location Names</button>
+    <p id="displayText2"></p>
+    <div id="spinner2" class="spinner"></div>
+
+    <button id="button3">Create Final Map</button>
+    <input type="text" id="userInput0" placeholder="Enter map name here">
+    <p id="displayText3"></p>
+    <div id="spinner3" class="spinner"></div>
+
+    <button id="button4">Display Map</button>
+    <p id="displayText4"></p>
+    <div id="spinner4" class="spinner"></div>
+
+    <button id="button5">Clear File Directory</button>
+    <p id="displayText5"></p>
+    <div id="spinner5" class="spinner"></div>
+
+    <button id="button6">Change API Key</button>
+    <input type="text" id="userInput1" placeholder="Enter API key here">
+    <p id="displayText6"></p>
+    <div id="spinner6" class="spinner"></div>
+
+    <button id="button7">Generate Word Count Sheet</button>
+    <p id="displayText7"></p>
+    <div id="spinner7" class="spinner"></div>
+
+    <!-- Modal for selecting a map -->
+    <div id="mapModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Select a Map</h2>
+            <select id="mapSelector">
+               <!-- Dynamically populated with map names -->
+            </select>
+            <button id="displaySelectedMap">Display Map</button>
+        </div>
+    </div>
+    <!-- CITE: https://tenor.com/view/point-of-interest-map-icon-visit-animated-gif-27153210 -->
+    <img src="point-of-interest-map.gif" alt="Rotating globe inside location pin" id="cornerGif">
+
+
+    <script type="text/javascript" src="/eel.js"></script>
+    <script type="text/javascript">
+
+   function toggleVisibility(element) {
+      element.style.display = element.textContent.trim() ? "block" : "none";
+   }
+
+   function resetAllDisplays() {
+      const displays = document.querySelectorAll("p[id^='displayText']");
+      displays.forEach(display => {
+          display.textContent = "";
+          display.style.display = "none";
+      });
+   }
+
+   async function handleFileUpload() {
+    resetAllDisplays(); // Hide all previously visible text
+    const fileInput = document.getElementById('fileInput0');
+    const display = document.getElementById('displayText0');
+    const spinner = document.getElementById('spinner0');
+
+    fileInput.click();
+
+    fileInput.onchange = async () => {
+        const files = fileInput.files;
+
+        if (files.length > 0) {
+            display.textContent = `Uploading Files, Please Wait...`;
+            spinner.style.display = "block";
+            toggleVisibility(display);
+
+            for (let file of files) {
+                const reader = new FileReader();
+                reader.onload = async function () {
+                    const binaryData = reader.result;
+
+                    // Display message for each uploaded file
+                    const message = await eel.save_file(file.name, binaryData)();
+                    display.textContent = message;
+                    toggleVisibility(display);
+
+                    // Wait 5 seconds before showing the next message
+                    await new Promise(resolve => setTimeout(resolve, 35000));
+                };
+                reader.readAsDataURL(file); // Encode file as Base64
+            }
+
+            spinner.style.display = "none";
+            display.textContent = "All files have been uploaded.";
+            toggleVisibility(display);
+        } else {
+            display.textContent = "No directory selected.";
+            toggleVisibility(display);
+        }
+    };
+  }
+
+   async function handleOCR() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText1');
+      const spinner = document.getElementById('spinner1');
+
+      display.textContent = `Performing OCR, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.process_ocr_directory()();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   async function handleNLP() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText2');
+      const spinner = document.getElementById('spinner2');
+
+      display.textContent = `Performing NLP, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.process_nlp_directory()();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   async function handleMap() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText3');
+      const userInput = document.getElementById('userInput0').value;
+      const spinner = document.getElementById('spinner3');
+
+      display.textContent = `Creating Map, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.make_map(userInput)();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   async function clearDir() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText5');
+      const spinner = document.getElementById('spinner5');
+
+      display.textContent = `Deleting Files, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.delete_files()();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   async function fullCount() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText7');
+      const spinner = document.getElementById('spinner7');
+
+      display.textContent = `Creating Sheet, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.count_all()();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   async function changeAPI() {
+      resetAllDisplays(); // Hide all previously visible text
+      const display = document.getElementById('displayText6');
+      const userInput = document.getElementById('userInput1').value;
+      const spinner = document.getElementById('spinner6');
+
+      display.textContent = `Changing API Key, Please Wait...`;
+      spinner.style.display = "block";
+      toggleVisibility(display);
+
+      const response = await eel.change_api(userInput)();
+      display.textContent = response;
+      toggleVisibility(display);
+      spinner.style.display = "none";
+   }
+
+   // Modal logic
+   document.getElementById('button4').addEventListener('click', showMapModal);
+   document.getElementById('closeModal').addEventListener('click', closeMapModal);
+   document.getElementById('displaySelectedMap').addEventListener('click', displayMap);
+
+   function showMapModal() {
+       resetAllDisplays(); // Hide previously displayed text
+       const modal = document.getElementById('mapModal');
+       const mapSelector = document.getElementById('mapSelector');
+       const display = document.getElementById('displayText4');
+
+       display.textContent = "Fetching available maps...";
+       toggleVisibility(display);
+
+       eel.get_available_maps()().then((maps) => {
+           // Populate the map selector
+           mapSelector.innerHTML = "";
+           maps.forEach(map => {
+               const option = document.createElement('option');
+               option.value = map;
+               option.textContent = map;
+               mapSelector.appendChild(option);
+           });
+
+           // Show modal
+           display.textContent = ""; // Clear the text after fetching maps
+           modal.style.display = 'flex';
+       });
+   }
+
+   function closeMapModal() {
+       document.getElementById('mapModal').style.display = 'none';
+   }
+
+   async function displayMap() {
+       const selectedMap = document.getElementById('mapSelector').value;
+       const display = document.getElementById('displayText4');
+       const spinner = document.getElementById('spinner4');
+
+       closeMapModal();
+
+       display.textContent = `Displaying map: ${selectedMap}...`;
+       spinner.style.display = "block";
+       toggleVisibility(display);
+
+       // Use eel to load the selected map
+       const response = await eel.display_map(selectedMap)();
+       display.textContent = response;
+       toggleVisibility(display);
+       spinner.style.display = "none";
+   }
+
+
+   // Event listeners for each button
+   document.getElementById('button0').addEventListener('click', handleFileUpload);
+   document.getElementById('button1').addEventListener('click', handleOCR);
+   document.getElementById('button2').addEventListener('click', handleNLP);
+   document.getElementById('button3').addEventListener('click', handleMap);
+   document.getElementById('button5').addEventListener('click', clearDir);
+   document.getElementById('button6').addEventListener('click', changeAPI);
+   document.getElementById('button7').addEventListener('click', fullCount);
+
+   </script>
+
+</body>
+</html>
